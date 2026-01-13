@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Plată Parcare Cluj</title>
+    <meta name="theme-color" content="#4F46E5">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<div id="app">
+    <header>
+        <h1><span class="header-icon">💬</span> <span class="text-gradient">SMS Parcare Cluj</span></h1>
+        <div id="status-dot"></div>
+    </header>
+
+    <div class="card control-group">
+        <label class="label">Configurare</label>
+        
+        <!-- Zone Selector -->
+        <div class="zone-selector">
+            <button class="zone-btn" data-zone="I" onclick="setZone('I')">Zona I</button>
+            <button class="zone-btn" data-zone="II" onclick="setZone('II')">Zona II</button>
+        </div>
+
+        <!-- Duration Grid -->
+        <div id="duration-grid" class="duration-grid">
+            <!-- JS populated -->
+        </div>
+    </div>
+
+    <!-- Plate Section -->
+    <div style="display: flex; flex-direction: column;">
+        <div class="card" style="border-bottom-left-radius: 4px; border-bottom-right-radius: 4px; z-index: 2;">
+            <label class="label">Număr Înmatriculare</label>
+            <div class="plate-container">
+                <input type="text" id="plate-input" placeholder="CJ 99 ABC" maxlength="12" autocomplete="off" spellcheck="false">
+                <div class="saved-badge" onclick="toggleHistory()">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 9l-7 7-7-7"/></svg>
+                </div>
+            </div>
+        </div>
+        <div id="history-drawer">
+            <!-- JS populated -->
+        </div>
+    </div>
+
+    <!-- Live Preview / Summary -->
+    <div class="card summary-card">
+        <div class="summary-row">
+            <span class="summary-label">SMS către 7480</span>
+            <span class="code-pill" id="sms-code-disp">403</span>
+        </div>
+        <div class="summary-row" style="margin-top: 8px;">
+            <span class="summary-label">Preț Total</span>
+            <span class="summary-value" id="price-disp">4 lei</span>
+        </div>
+        <div style="font-family: monospace; font-size: 13px; opacity: 0.7; margin-top: 4px; text-align: right;">
+            Mesaj: <span id="msg-preview">403 CJ99ABC</span>
+        </div>
+    </div>
+
+    <!-- Actions -->
+    <div>
+        <a id="send-btn" href="#" class="primary-btn disabled">
+            <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/></svg>
+            Trimite SMS
+        </a>
+        <div class="legal-text">Plătește înainte sau în max 5 min de la parcare.</div>
+    </div>
+
+    <div class="secondary-group">
+        <button class="sec-btn" onclick="copyText()">
+            <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M8 4H6a2 2 0 00-2 2v14a2 2 0 002 2h12a2 2 0 002-2v-2M16 4h2a2 2 0 012 2v4M21 14H11M15 10l-4 4 4 4"/></svg>
+            Copiază Text
+        </button>
+        <button class="sec-btn" onclick="copyNumber()">
+            <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/></svg>
+            Număr 7480
+        </button>
+    </div>
+</div>
+
+<div id="toast" class="toast">Copiat!</div>
+
+<!-- Scripts -->
+<script src="js/data.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
