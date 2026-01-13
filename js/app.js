@@ -222,3 +222,11 @@ window.addEventListener('appinstalled', () => {
     installBtn.style.display = 'none';
     showToast('Aplicație instalată!');
 });
+
+// --- iOS DETECTION ---
+const isIos = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
+
+if (isIos && !isStandalone) {
+    document.getElementById('ios-hint').style.display = 'block';
+}
