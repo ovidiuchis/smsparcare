@@ -190,22 +190,35 @@ function saveState() {
     localStorage.setItem('clujParkingV2', JSON.stringify(state));
 }
 
-function copyText() {
-    const data = PARKING_DATA[state.zone].find(d => d.value === state.durationValue);
-    const txt = `${data.code} ${state.plate}`;
-    if (!isValid(state.plate)) {
-        showToast('Introdu număr valid!');
-        return;
-    }
-    navigator.clipboard.writeText(txt).then(() => showToast('Mesaj Copiat!'));
-}
 
-function copyNumber() {
-    navigator.clipboard.writeText('7480').then(() => showToast('Număr Copiat!'));
-}
 
 function showToast(m) {
     els.toast.textContent = m;
     els.toast.classList.add('visible');
     setTimeout(() => els.toast.classList.remove('visible'), 2000);
 }
+
+// --- PWA INSTALL ---
+let deferredPrompt;
+const installBtn = document.getElementById('install-btn');
+
+window.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault();
+    deferredPrompt = e;
+    installBtn.style.display = 'flex';
+});
+
+window.installApp = async () => {
+    if (!deferredPrompt) return;
+    deferredPrompt.prompt();
+    const { outcome } = await deferredPrompt.userChoice;
+    deferredPrompt = null;
+    if (outcome === 'accepted') {
+        installBtn.style.display = 'none';
+    }
+};
+
+window.addEventListener('appinstalled', () => {
+    installBtn.style.display = 'none';
+    showToast('Aplicație instalată!');
+});

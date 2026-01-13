@@ -71,9 +71,8 @@ header {
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
     border: 1px solid var(--card-border);
-    border-radius: 99px; /* Pill shape */
-    box-shadow: 0 4px 20px rgba(0,0,0,0.06);
-    margin-bottom: 8px; /* separation from content */
+    border-radius: var(--radius-xl); /* Less pill, more card */
+    box-shadow: 0 4px 20px rgba(0,0,0,0.06);    
 }
 h1 {
     font-size: 18px;
@@ -383,6 +382,19 @@ input#plate-input::placeholder {
     color: var(--text-muted);
     margin-top: 8px;
     line-height: 1.4;
+}
+.credits-link {
+    display: inline-block;
+    margin-top: 4px;
+    color: var(--text-muted);
+    opacity: 0.6;
+    text-decoration: none;
+    font-size: 10px;
+    transition: opacity 0.2s;
+}
+.credits-link:hover {
+    opacity: 1;
+    text-decoration: underline;
 }
 
 /* Toast */
