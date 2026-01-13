@@ -230,3 +230,41 @@ const isStandalone = window.matchMedia('(display-mode: standalone)').matches || 
 if (isIos && !isStandalone) {
     document.getElementById('ios-hint').style.display = 'block';
 }
+
+// --- SERVICE WORKER UPDATES ---
+if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./sw.js').then(reg => {
+            
+            reg.addEventListener('updatefound', () => {
+                const newWorker = reg.installing;
+                newWorker.addEventListener('statechange', () => {
+                    if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                        // New update available!
+                        showUpdateToast(newWorker);
+                    }
+                });
+            });
+
+        });
+    });
+
+    let refreshing;
+    navigator.serviceWorker.addEventListener('controllerchange', () => {
+        if (refreshing) return;
+        window.location.reload();
+        refreshing = true;
+    });
+}
+
+function showUpdateToast(worker) {
+    const t = els.toast;
+    t.innerHTML = 'Versiune nouă disponibilă! <br><span style="text-decoration:underline; cursor:pointer;">Apasă pentru actualizare</span>';
+    t.classList.add('visible');
+    
+    // Keep it visible until clicked
+    t.onclick = () => {
+        worker.postMessage({ type: 'SKIP_WAITING' });
+        t.classList.remove('visible');
+    };
+}
