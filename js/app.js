@@ -3,7 +3,8 @@ let state = {
     zone: 'I',
     durationValue: '30m',
     plate: '',
-    savedPlates: []
+    savedPlates: [],
+    lastSession: null // { plate, timestamp, durationMins }
 };
 
 // --- REFS ---
@@ -20,7 +21,8 @@ const els = {
     msgPrev: document.getElementById('msg-preview'),
     sendBtn: document.getElementById('send-btn'),
     toast: document.getElementById('toast'),
-    statusDot: document.getElementById('status-dot')
+    statusDot: document.getElementById('status-dot'),
+    lastSession: document.getElementById('last-session-chip')
 };
 
 // --- INIT ---
@@ -29,6 +31,8 @@ const els = {
     renderZone();
     renderDuration();
     renderHistory();
+    renderHistory();
+    renderSession();
     updateUI();
 
     // Bind Events
@@ -104,6 +108,19 @@ function deleteHistory(plate, e) {
     renderHistory();
 }
 
+function saveSession(durVal, plate) {
+    // Map value to minutes
+    const map = { '30m': 30, '1h': 60, '2h': 120, '4h': 240 };
+    const mins = map[durVal] || 60;
+    
+    state.lastSession = {
+        timestamp: Date.now(),
+        durationMins: mins,
+        plate: plate
+    };
+    saveState();
+}
+
 // --- RENDER ---
 function renderZone() {
     els.zoneBtns.forEach(b => {
@@ -144,6 +161,55 @@ function renderHistory() {
     });
 }
 
+function renderSession() {
+    const s = state.lastSession;
+    if (!s) return;
+
+    const box = els.lastSession;
+    const now = Date.now();
+    const ageMs = now - s.timestamp;
+    const oneDayMs = 24 * 60 * 60 * 1000;
+
+    // Hide if older than 24h
+    if (ageMs > oneDayMs) {
+        box.style.display = 'none';
+        return;
+    }
+
+    const expiryTime = s.timestamp + (s.durationMins * 60 * 1000);
+    const leftMs = expiryTime - now;
+    const leftMins = Math.ceil(leftMs / 60000);
+
+    box.style.display = 'flex';
+    
+    // Formatting date helper
+    const dateObj = new Date(s.timestamp);
+    const timeStr = dateObj.toLocaleTimeString('ro-RO', { hour: '2-digit', minute:'2-digit' });
+    const dateStr = dateObj.toLocaleDateString('ro-RO', { day: 'numeric', month: 'long' });
+
+    if (leftMs > 0) {
+        // Active
+        box.className = 'session-chip active';
+        box.innerHTML = `
+            <span class="sess-icon">🅿️</span>
+            <div class="sess-info">
+                <strong>${s.plate}</strong> • ${dateStr}, ${timeStr}
+                <div class="sess-remain">Expira în ${leftMins} min</div>
+            </div>
+        `;
+    } else {
+        // Expired (but < 24h)
+        box.className = 'session-chip expired';
+        box.innerHTML = `
+            <span class="sess-icon">🕒</span>
+            <div class="sess-info">
+                <strong style="text-decoration:line-through; opacity:0.7;">${s.plate}</strong> • ${dateStr}, ${timeStr}
+                <div class="sess-remain">Expirat</div>
+            </div>
+        `;
+    }
+}
+
 function updateUI() {
     const data = PARKING_DATA[state.zone].find(d => d.value === state.durationValue);
     if (!data) return;
@@ -162,6 +228,12 @@ function updateUI() {
         const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
         const sep = isIOS ? '&' : '?';
         els.sendBtn.href = `sms:7480${sep}body=${encodeURIComponent(data.code + ' ' + state.plate)}`;
+        
+        // Save session on click (approximation)
+        els.sendBtn.onclick = () => {
+            saveSession(data.value, state.plate);
+            setTimeout(renderSession, 500); // delayed update
+        };
     } else {
         els.sendBtn.classList.add('disabled');
         els.sendBtn.removeAttribute('href');
@@ -179,6 +251,7 @@ function restoreState() {
             if (s.durationValue) state.durationValue = s.durationValue;
             if (s.plate) state.plate = s.plate;
             if (s.savedPlates) state.savedPlates = s.savedPlates;
+            if (s.lastSession) state.lastSession = s.lastSession;
             
             // Set input value
             els.plateIn.value = state.plate;
