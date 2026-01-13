@@ -61,18 +61,18 @@ body {
     padding-bottom: max(20px, env(safe-area-inset-bottom));
 }
 
-/* Floating Header */
+/* Floating Header - Symmetry */
 header {
     display: flex;
     justify-content: space-between;
     align-items: center;
     padding: 12px 20px;
-    background: var(--card-bg);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-    border: 1px solid var(--card-border);
-    border-radius: var(--radius-xl); /* Less pill, more card */
-    box-shadow: 0 4px 20px rgba(0,0,0,0.06);    
+    background: var(--primary-gradient);
+    color: white;
+    border: none;
+    border-radius: var(--radius-xl);
+    box-shadow: 0 8px 20px rgba(79, 70, 229, 0.3);
+    margin-bottom: 8px;
 }
 h1 {
     font-size: 18px;
@@ -82,6 +82,18 @@ h1 {
     display: flex;
     align-items: center;
     gap: 10px;
+    color: white;
+}
+/* Override gradient text inside header to be white */
+header .text-gradient {
+    background: none;
+    -webkit-text-fill-color: initial;
+    color: white;
+    filter: none;
+}
+.header-icon {
+    font-size: 22px;
+    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
 }
 .text-gradient {
     background: var(--primary-gradient);
